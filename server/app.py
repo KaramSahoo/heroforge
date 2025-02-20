@@ -21,9 +21,7 @@ cors = CORS(app, origins="*")
 
 @app.before_request
 def before_request():
-    print("Initializing LLM model...")
     g.llm_model = llm
-    print("LLM model initialized!")
 
 
 # Register all blueprints
