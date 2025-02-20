@@ -38,7 +38,14 @@ def handle_mission():
 
         # print(f"Workflow state: {state}")
 
-        return jsonify({"message": f"Team {state['team_name']} has been summoned!"}), 200
+        return jsonify({
+            "message": f"Team {state['team_name']} has been summoned!",
+            "state": {
+                **state,  # Copy all state values
+                "team": [hero.model_dump() for hero in state["team"]]  # Convert SuperHero objects to dictionaries
+            }
+        }), 200
+
 
     except Exception as e:
         # Error handling for any other issues (e.g., invalid JSON format)

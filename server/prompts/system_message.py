@@ -23,7 +23,7 @@ Guidelines for the Story:
 Now, craft an engaging story!"""
 
 IMPROVE_STORY_PROMPT_SYSTEM = """You are an expert storyteller, crafting epic adventures with thrilling detail. 
-Your task is to improve the story based on the given mission and the heroes involved and feedback. Use the feedbacl
+Your task is to improve the story based on the given mission and the heroes involved and feedback. Use the feedback
 to enhance the story.
 
 Guidelines for the Story:

@@ -1,7 +1,7 @@
 from langchain.schema import SystemMessage, HumanMessage
 from utils.logger import logger
 from prompts.system_message import STORY_PROMPT_SYSTEM, IMPROVE_STORY_PROMPT_SYSTEM
-from prompts.user_prompts import STORY_PROMPT_USER
+from prompts.user_prompts import STORY_PROMPT_USER, IMPROVE_STORY_PROMPT_USER
 
 
 class StoryGenerator:
@@ -29,9 +29,11 @@ class StoryGenerator:
             for hero in heroes
         ])
 
-        return STORY_PROMPT_USER.format(
+        return IMPROVE_STORY_PROMPT_USER.format(
             mission=mission,
             team_name=team_name,
+            story=story,
+            feedback=feedback,
             heroes_details=heroes_details or "No heroes assigned yet."
         )
 

@@ -52,15 +52,15 @@ class Workflow:
         return result
     
     def story_generator(self, state: State):
-        if state.get("story_feedback"):
-            result = self.story_generator_agent.improve_story(state["mission"], state["team_name"], state["team"], state["story_feedback"])
+        if self.state["feedback_grade"] == "Rejected + Feedback":
+            result = self.story_generator_agent.improve_story(state["mission"], state["team_name"], state["team"], state["story_feedback"], state["story"])
         else:
             result = self.story_generator_agent.generate_story(state["mission"], state["team_name"], state["team"])
         self.state.update(result)
         return result
     
     def story_evaluator(self, state: State):
-        result = self.story_evaluator_agent.evaluate_story(state["story"], state["story_feedback"])
+        result = self.story_evaluator_agent.evaluate_story(state["story"])
         self.state.update(result)
         return result
 
@@ -69,7 +69,9 @@ class Workflow:
         """Route back to story generator or continue based upon feedback from the evaluator"""
 
         if state.get("feedback_grade") == "accepted":
+            self.state["feedback_grade"] = "Accepted"
             return "Accepted"
+        self.state["feedback_grade"] = "Rejected + Feedback"
         return "Rejected + Feedback"
 
     def build_workflow(self):
