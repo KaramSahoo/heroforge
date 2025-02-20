@@ -1,13 +1,10 @@
 from typing import TypedDict, Annotated, List
-from langchain_core.messages import SystemMessage, HumanMessage
 from langgraph.graph import StateGraph, START, END
-from schemas import SuperHero, Team
+from utils.schemas import SuperHero, Team, Story, StoryFeedback
+from agents.story_evaluator import StoryEvaluator
 from agents.story_writer import StoryGenerator
 from agents.team_creator import TeamGenerator
-import json
 from utils.logger import logger
-
-from prompts.system_message import TEAM_CREATOR_PROMPT
 
 # Graph state
 class State(TypedDict):
@@ -15,6 +12,8 @@ class State(TypedDict):
     team_name: str  # Name of the superhero team
     team: list[SuperHero]  # List of superheroes
     story: str  # Story of the superhero team's mission
+    story_feedback: str  # Feedback on the story
+    feedback_grade: str  # Grade for the story feedback
 
 
 class Workflow:
@@ -24,21 +23,24 @@ class Workflow:
 
         Args:
             llm: The language model used for structured output.
-            creator_instructions (str): Instructions for generating a team.
-            mission (str): The mission description.
         """
         self.llm = llm
-        self.team_creator_llm = llm.with_structured_output(Team)  # Augment LLM with schema
+        self.team_creator_llm = llm.with_structured_output(Team)  # Augment LLM with Team schema
+        self.story_creator_llm = llm.with_structured_output(Story)  # Augment LLM with Story schema
+        self.story_evaluator_llm = llm.with_structured_output(StoryFeedback)  # Augment LLM with StoryFeedback schema
+        
         self.team_generator_agent = TeamGenerator(self.team_creator_llm)
-        self.story_generator_agent = StoryGenerator(llm)
-        self.creator_instructions = TEAM_CREATOR_PROMPT
+        self.story_generator_agent = StoryGenerator(self.story_creator_llm)
+        self.story_evaluator_agent = StoryEvaluator(self.story_evaluator_llm)
 
         # Initialize the workflow state
         self.state: State = {
             "mission": "",
             "team_name": "",
             "team": [],
-            "feedback": "",
+            "story": "",
+            "story_feedback": "",
+            "feedback_grade": ""
         }
 
         self.orchestrator_worker_builder = StateGraph(State)
@@ -49,11 +51,26 @@ class Workflow:
         self.state.update(result)
         return result
     
-    def story_generator(self, state: State):    
-        """Wrapper function to call the story generator agent."""
-        result = self.story_generator_agent.generate_story(state["mission"], state["team_name"], state["team"])
+    def story_generator(self, state: State):
+        if state.get("story_feedback"):
+            result = self.story_generator_agent.improve_story(state["mission"], state["team_name"], state["team"], state["story_feedback"])
+        else:
+            result = self.story_generator_agent.generate_story(state["mission"], state["team_name"], state["team"])
         self.state.update(result)
         return result
+    
+    def story_evaluator(self, state: State):
+        result = self.story_evaluator_agent.evaluate_story(state["story"], state["story_feedback"])
+        self.state.update(result)
+        return result
+
+    # Conditional edge function to route back to joke generator or end based upon feedback from the evaluator
+    def route_story_feedback(self, state: State):
+        """Route back to story generator or continue based upon feedback from the evaluator"""
+
+        if state.get("feedback_grade") == "accepted":
+            return "Accepted"
+        return "Rejected + Feedback"
 
     def build_workflow(self):
         """
@@ -62,11 +79,18 @@ class Workflow:
         logger.info("Building workflow...")
         self.orchestrator_worker_builder.add_node("team_generator", self.team_generator)
         self.orchestrator_worker_builder.add_node("story_generator", self.story_generator)
+        self.orchestrator_worker_builder.add_node("story_evaluator", self.story_evaluator)
 
         # Add edges to connect nodes
         self.orchestrator_worker_builder.add_edge(START, "team_generator")
         self.orchestrator_worker_builder.add_edge("team_generator", "story_generator")
-        self.orchestrator_worker_builder.add_edge("story_generator", END)
+        self.orchestrator_worker_builder.add_edge("story_generator", "story_evaluator")
+        self.orchestrator_worker_builder.add_conditional_edges(
+            "story_evaluator", self.route_story_feedback, {
+                "Accepted": END,
+                "Rejected + Feedback": "story_generator"
+            }
+        )
 
     def compile_workflow(self):
         """
@@ -82,6 +106,6 @@ class Workflow:
         Returns:
             dict: The final state after execution.
         """
-        logger.info(f"[yellow]Invoking workflow for mission:[/yellow] {mission}")
+        logger.info(f"Invoking workflow for mission: [yellow]{mission}[/yellow]")
         self.state["mission"] = mission
         return self.orchestrator_worker.invoke({"mission": self.state["mission"]})

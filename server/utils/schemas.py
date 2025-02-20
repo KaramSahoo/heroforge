@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field # type: ignore
 from typing import Annotated, List
+from typing_extensions import Literal
 
 # Schema for structured output to use in planning
 class Weapon(BaseModel):
@@ -39,28 +40,18 @@ class Team(BaseModel):
         description="This is the team of superheroes.",
     )
 
+class Story(BaseModel):
+    title: str = Field(
+        description="Title of the story.",
+    )
+    story: str = Field(
+        description="This is the story of how the superhero team accomplishes the mission.",
+    )
 
-# from langchain_openai import ChatOpenAI
-# from langgraph.graph import StateGraph, MessagesState, START
-# from pydantic import BaseModel, Field
-
-# from langchain_core.messages import HumanMessage, SystemMessage
-
-# from dotenv import load_dotenv
-
-# load_dotenv()
-
-# llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.2)
-
-# mission = "save the earth from a meteorite"
-# # Augment the LLM with schema for structured output
-# planner = llm.with_structured_output(Team)
-
-# selected_gifts = planner.invoke(
-#         [
-#             SystemMessage(content="You are a special agent who excels at recruiting and/or creating superheros based on given missions or quest. According to the user's mission, you need to create a team of superheroes that can solve the quest/mission. Each superhero has a name, alias, power, origin(city), and weapon(type, special name, lore)."),
-#             HumanMessage(content=f"Here is the mission: {mission}"),
-#         ]
-#     )
-
-# print(selected_gifts)
+class StoryFeedback(BaseModel):
+    grade: Literal["accepted", "not accepted"] = Field(
+        description="Decide if the story is logical or not.",
+    )
+    feedback: str = Field(
+        description="If the story is not logical, provide feedback on how to improve it.",
+    )

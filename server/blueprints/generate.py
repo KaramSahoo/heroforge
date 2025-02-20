@@ -34,8 +34,9 @@ def handle_mission():
 
         # Invoke the workflow
         state = workflow.invoke_workflow(mission=mission)
-        print(state['team'])
         logger.success("[green]Workflow execution completed![/green]")
+
+        # print(f"Workflow state: {state}")
 
         return jsonify({"message": f"Team {state['team_name']} has been summoned!"}), 200
 

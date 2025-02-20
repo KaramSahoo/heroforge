@@ -1,5 +1,5 @@
 from langchain.schema import SystemMessage, HumanMessage
-from prompts.system_message import TEAM_CREATOR_PROMPT
+from prompts.system_message import TEAM_CREATOR_PROMPT_SYSTEM
 from utils.logger import logger
 
 class TeamGenerator:
@@ -12,10 +12,10 @@ class TeamGenerator:
         logger.info(f"Generating team for mission: [yellow]{mission}[/yellow]")
 
         selected_team = self.llm.invoke([
-            SystemMessage(content=TEAM_CREATOR_PROMPT),
+            SystemMessage(content=TEAM_CREATOR_PROMPT_SYSTEM),
             HumanMessage(content=f"Here is the mission: {mission}")
         ])
 
-        logger.success(f"✅ Team Created: \"{selected_team.team_name}\" of {len(selected_team.team_name)} superheroes!")
+        logger.success(f"Team Created: \"{selected_team.team_name}\" of {len(selected_team.team_name)} superheroes!")
 
         return {"team": selected_team.team, "team_name": selected_team.team_name}
