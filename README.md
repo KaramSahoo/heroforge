@@ -61,7 +61,7 @@ Send a `POST` request to `/generate` with a JSON payload containing the `mission
 
 #### Example Request:
 ```sh
-curl -X POST "http://127.0.0.1:5000/generate" \
+curl -X POST "http://127.0.0.1:8000/generate" \
      -H "Content-Type: application/json" \
      -d '{"mission": "Save the city from an alien invasion"}'
 ```
