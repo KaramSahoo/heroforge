@@ -16,6 +16,8 @@ load_dotenv()
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.2)
 db_initialized = False
+llm_initialized = False
+
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -24,24 +26,29 @@ cors = CORS(app, origins="*")
 
 @app.before_request
 def setup_llm():
-    logger.info("Initializing LLM model...")
-    # Initialize the LLM model here
-    llm_initialized = True
-    g.llm_model = llm
-    logger.info("LLM model initialized.")
+    global llm_initialized
+    if not llm_initialized:
+        # Initialize the LLM model here
+        g.llm_model = llm
+        llm_initialized = True
+        logger.info("LLM model initialized.")
+    else:
+        # Use the existing LLM model
+        g.llm_model = llm
+        logger.info("Using existing LLM model.")
 
-@app.before_request
-def setup_db():
-    """Ensures MongoDB is initialized only once."""
-    global db_initialized
-    if not db_initialized:
-        init_db()
-        db_initialized = True
+# @app.before_request
+# def setup_db():
+#     """Ensures MongoDB is initialized only once."""
+#     global db_initialized
+#     if not db_initialized:
+#         init_db()
+#         db_initialized = True
 
-@app.teardown_appcontext
-def teardown_db(exception):
-    """Close database connection after request."""
-    close_db(exception)
+# @app.teardown_appcontext
+# def teardown_db(exception):
+#     """Close database connection after request."""
+#     close_db(exception)
 
 
 # Register all blueprints
