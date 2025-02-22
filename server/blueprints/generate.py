@@ -47,7 +47,7 @@ def handle_mission():
         return jsonify({"error": str(e)}), 500
 
 # Route 2: Dummy mission response for frontend testing
-@generate_bp.route('/test', methods=['GET'])
+@generate_bp.route('/test', methods=['POST'])
 def test_mission():
     """Returns a dummy mission response for frontend testing."""
     dummy_state = {
