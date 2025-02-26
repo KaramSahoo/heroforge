@@ -1,71 +1,45 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+
 
 export default function Hero() {
-  const [mission, setMission] = useState('');
+  const [isVisible, setIsVisible] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch('http://127.0.0.1:8000/generate/test', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ mission }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        router.push('/story');
-      } else {
-        alert('Subscription failed.');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred.');
-    }
-  };
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   return (
-    <header>
-      {/* Hero Container */}
-      <div className="mx-auto max-w-7xl px-5 py-16 md:px-10 md:py-20">
-        {/* Component */}
-        <div className="mx-auto mb-8 w-full max-w-3xl text-center md:mb-12 lg:mb-16">
-          {/* Hero Title */}
-          <h1 className="mb-4 text-4xl font-bold md:text-6xl">
-            HeroForge: AI Storytelling
-          </h1>
-          <p className="mx-auto mb-5 max-w-3xl text-sm text-gray-500 sm:text-xl md:mb-6 lg:mb-8">
-            If you are looking to find a job during a zombie apocalypse or trying to save your crush from an alien abduction, you are at the right place.<span className="text-yellow-600"> Using our professional and out of the world (literally) services recruit a team of superheroes and listen to their heroic quest in solving your mission.</span>
-          </p>
-          {/* Hero Button */}
-          <div className="flex items-stretch justify-center flex-wrap">
-            <input
-              type="text"
-              placeholder="Enter your mission"
-              value={mission}
-              onChange={(e) => setMission(e.target.value)}
-              className="mr-5 inline-block rounded-md w-full max-w-xs px-8 py-4 text-center font-semibold text-white md:mr-6 lg:mr-8"
-            />
-            <button
-              onClick={handleSubmit}
-              className="mr-5 inline-block rounded-md bg-yellow-600 px-8 py-4 text-center font-semibold text-white md:mr-6 lg:mr-8"
-            >
-              Summon Heroes
-            </button>
-            <a href="#" className="flex items-center justify-center rounded-md border border-solid border-yellow-600 px-6 py-3 font-bold text-black">
-              <p className="text-sm text-yellow-600 sm:text-base">Lore</p>
-            </a>
-          </div>
-        </div>
-        {/* Hero Image */}
-        <img src="./pic.jpg" alt="" className="inline-block max-h-[512px] w-full object-cover" />
-      </div>
-    </header>
+    <div className="flex flex-col items-center justify-center h-screen w-screen bg-gradient-to-br from-gray-900 to-black text-white">
+      <motion.h1
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: isVisible ? 1 : 0, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        className="text-5xl md:text-7xl font-extrabold text-center drop-shadow-lg"
+      >
+        Welcome to HeroForge
+      </motion.h1>
+      <motion.p
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: isVisible ? 1 : 0, y: 0 }}
+        transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
+        className="mt-4 text-lg md:text-xl text-gray-300 text-center"
+      >
+        Your ultimate adventure begins here
+      </motion.p>
+      <motion.button
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isVisible ? 1 : 0 }}
+        transition={{ duration: 1, delay: 1.5 }}
+        onClick={() => router.push("/home")}
+        className="mt-10 px-6 py-3 bg-yellow-500 text-black font-bold rounded-lg shadow-lg hover:bg-yellow-400 transition"
+      >
+        Discover
+      </motion.button>
+    </div>
   );
 }
-
