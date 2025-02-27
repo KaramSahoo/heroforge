@@ -6,6 +6,7 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [team, setTeam] = useState([]);
   const [story, setStory] = useState("");
+  const [storyName, setStoryName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -28,6 +29,7 @@ export default function Home() {
       const data = await response.json();
       setTeam(data.state.team || []);
       setStory(data.state.story || "");
+      setStoryName(data.state.team_name || "");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -69,7 +71,7 @@ export default function Home() {
       </div>)}
       {story && (
         <div className="mt-10 p-6 bg-gray-800 rounded-lg shadow-lg border border-gray-700 w-full max-w-full text-center">
-          <h2 className="text-2xl font-bold text-blue-400">Mission Story</h2>
+          <h2 className="text-2xl font-bold text-blue-400">Mission Story: {storyName}</h2>
           <p className="mt-4 text-gray-300 text-sm text-left">{story}</p>
         </div>
       )}
