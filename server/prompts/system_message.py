@@ -19,6 +19,7 @@ Guidelines for the Story:
 2. Highlight each hero’s unique powers and how they contribute to the mission.
 3. Include challenges, suspense, and a satisfying resolution.
 4. Keep the tone engaging, suitable for a sci-fi/fantasy narrative.
+5. Do not generate long stories. Maximum 150 words.
 
 Now, craft an engaging story!"""
 
