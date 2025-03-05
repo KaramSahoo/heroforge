@@ -95,7 +95,7 @@ export function LandingPage(props) {
                   openDelay={500}
                   closeDelay={100}
             >
-              <a className="m-auto" href="/home">
+              <a className="m-auto" href="/gallery">
                   <Icon color="blue.500">
                     <IoLibraryOutline size={50}/>
                   </Icon>
@@ -116,7 +116,7 @@ export function LandingPage(props) {
             openDelay={500}
             closeDelay={100}
           >
-            <a className="m-auto" href="/gallery">
+            <a className="m-auto" href="/home">
               <Icon color="yellow.500">                
                 <GiEnergyArrow size={50}/>
               </Icon>

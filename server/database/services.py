@@ -16,6 +16,14 @@ class WeaponService:
         weapon = WeaponRepository.get_weapon(weapon_id)
         print(f"✅ Weapon found: {weapon}" if weapon else "❌ Weapon not found")
         return weapon
+    
+    @staticmethod
+    def get_all_weapons():
+        """Fetches all weapons."""
+        print("🔍 Fetching all weapons...")
+        weapons = WeaponRepository.get_all_weapons()
+        print(f"✅ Retrieved {len(weapons)} weapons.")
+        return weapons
 
 
 class SuperHeroService:
@@ -31,6 +39,14 @@ class SuperHeroService:
     @staticmethod
     def get_superhero(hero_id):
         return SuperHeroRepository.get_superhero(hero_id)
+    
+    @staticmethod
+    def get_all_superhero():
+        """Fetches all superheros."""
+        print("🔍 Fetching all heros...")
+        superheros = SuperHeroRepository.get_all_superheros()
+        print(f"✅ Retrieved {len(superheros)} superheros.")
+        return superheros
 
 class TeamService:
     @staticmethod
@@ -74,4 +90,12 @@ class TeamService:
 
         print(f"✅ Team \"{team['team_name']}\" retrieved successfully!")
         return team
+
+    @staticmethod
+    def get_all_teams():
+        """Fetches all superhero teams."""
+        print("🔍 Fetching all teams...")
+        teams = TeamRepository.get_all_teams()
+        print(f"✅ Retrieved {len(teams)} teams.")
+        return teams
 

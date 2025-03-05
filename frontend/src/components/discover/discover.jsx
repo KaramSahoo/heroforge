@@ -24,7 +24,7 @@ export function DiscoverPage(props) {
     setLoading(true);
     setError(null);
     try {
-        const response = await fetch("http://127.0.0.1:8000/generate/test", {
+        const response = await fetch("http://127.0.0.1:8000/generate/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -164,14 +164,14 @@ export function DiscoverPage(props) {
           <GridItem 
             rowSpan={1} colSpan={5}
             className="bg-black flex content-center justify-center border-white border-2 border-opacity-55">
-                {story && (
-                    <h1 className="text-sm text-right p-6 m-auto font-bold font-mono">
-                        <Highlight query={team[2].team.name} styles={{ bg: "orange.600" }}>{story}</Highlight>
+                {(!loading && summoned) && (
+                    <h1 className="text-sm text-right m-auto font-bold font-mono">
+                        <Highlight query={storyName} styles={{ bg: "orange.600" }}>{story}</Highlight>
                     </h1>
                 )}
           </GridItem>
           <GridItem 
-            rowSpan={1} colSpan={2}
+            rowSpan={1} colSpan={3}
             className="bg-black flex content-center justify-center border-white border-2 border-opacity-55">
                 <Input 
                     placeholder="Type your mission..." 
@@ -185,12 +185,12 @@ export function DiscoverPage(props) {
                     disabled={loading}
                     loading={loading}
                 >
-                    {loading ? "Loading..." : "Summon"}
+                    {loading ? "Loading" : "Summon"}
                 </Button>
                 {error && <p className="mt-4 text-red-500">{error}</p>}
           </GridItem>
           <GridItem
-            rowSpan={1} colSpan={3}
+            rowSpan={1} colSpan={2}
             className="bg-green-600 flex content-center justify-center border-white border-2 border-opacity-55">
           </GridItem>
           

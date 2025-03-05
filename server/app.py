@@ -3,6 +3,7 @@
 from flask import Flask, g
 from flask_cors import CORS
 from blueprints.generate import generate_bp
+from blueprints.data import data_bp
 from utils.logger import logger
 from config import config
 from langchain_openai import ChatOpenAI
@@ -37,22 +38,23 @@ def setup_llm():
         g.llm_model = llm
         logger.info("Using existing LLM model.")
 
-# @app.before_request
-# def setup_db():
-#     """Ensures MongoDB is initialized only once."""
-#     global db_initialized
-#     if not db_initialized:
-#         init_db()
-#         db_initialized = True
+@app.before_request
+def setup_db():
+    """Ensures MongoDB is initialized only once."""
+    global db_initialized
+    if not db_initialized:
+        init_db()
+        db_initialized = True
 
-# @app.teardown_appcontext
-# def teardown_db(exception):
-#     """Close database connection after request."""
-#     close_db(exception)
+@app.teardown_appcontext
+def teardown_db(exception):
+    """Close database connection after request."""
+    close_db(exception)
 
 
 # Register all blueprints
 app.register_blueprint(generate_bp, url_prefix='/generate')
+app.register_blueprint(data_bp, url_prefix='/data')
 
 if __name__ == '__main__':
     app.run(debug=app.config['DEBUG'], port=app.config['PORT'])

@@ -18,6 +18,11 @@ class WeaponRepository:
     @staticmethod
     def delete_weapon(weapon_id):
         return get_db().weapons.delete_one({"_id": ObjectId(weapon_id)})
+    
+    @staticmethod
+    def get_all_weapons():
+        weapons = list(get_db().weapons.find({}))
+        return weapons
 
 # --- SuperHero Repository ---
 class SuperHeroRepository:
@@ -36,6 +41,11 @@ class SuperHeroRepository:
     @staticmethod
     def delete_superhero(hero_id):
         return get_db().superheroes.delete_one({"_id": ObjectId(hero_id)})
+    
+    @staticmethod
+    def get_all_superhero():
+        superheros = list(get_db().superheros.find({}))
+        return superheros
     
 from bson.objectid import ObjectId
 from .connection import get_db
@@ -61,4 +71,9 @@ class TeamRepository:
     def delete_team(team_id):
         result = get_db().teams.delete_one({"_id": ObjectId(team_id)})
         return result.deleted_count > 0
+    
+    @staticmethod
+    def get_all_teams():
+        teams = list(get_db().teams.find({}))
+        return teams
 
